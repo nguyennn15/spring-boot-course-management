@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
     String message() default
             "Mã voucher không hợp lệ. Phải có định dạng COURSE_xxxx (với xxxx là 4 chữ số)";
 
-    Class<?>[] groups() default {};
+    Class[] groups() default {};
 
-    Class<? extends Payload>[] payload() default {};
+    Class[] payload() default {};
 }

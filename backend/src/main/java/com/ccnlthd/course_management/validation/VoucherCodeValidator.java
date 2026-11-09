@@ -8,14 +8,10 @@ public class VoucherCodeValidator implements ConstraintValidator<ValidVoucherCod
     private static final String REGEX = "^COURSE_\\d{4}$";
 
     @Override
-    public boolean isValid(
-            String value,
-            ConstraintValidatorContext context
-    ) {
+    public boolean isValid(String value, ConstraintValidatorContext context) {
         if (value == null) {
             return true;
         }
-
         return value.matches(REGEX);
     }
 }
