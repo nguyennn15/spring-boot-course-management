@@ -1,5 +1,6 @@
 package com.ccnlthd.course_management.dto.request;
 
+import com.ccnlthd.course_management.validation.ValidVoucherCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -30,5 +31,8 @@ public class EnrollmentRequest {
             description = "Exact uppercase value; surrounding whitespace is not accepted",
             requiredMode = Schema.RequiredMode.REQUIRED)
     private String status;
+
+    @ValidVoucherCode
+    private String voucherCode;
 
 }
