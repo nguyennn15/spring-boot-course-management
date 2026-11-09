@@ -1,5 +1,6 @@
 package com.ccnlthd.course_management.dto.request;
 
+import com.ccnlthd.course_management.validation.ValidStudentCode;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -21,4 +22,9 @@ public class StudentRequest {
 
     @Size(max = 20, message = "Student phone must not exceed 20 characters")
     private String phone;
+
+
+    @NotBlank(message = "Mã học viên không được trống")
+    @ValidStudentCode
+    private String studentCode;
 }
