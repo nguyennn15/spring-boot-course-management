@@ -1,5 +1,6 @@
 package com.ccnlthd.course_management.dto.request;
 
+import com.ccnlthd.course_management.validation.ValidCoursePrice;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -30,6 +31,7 @@ public class CourseRequest {
 
     @NotNull(message = "Course price is required")
     @PositiveOrZero(message = "Course price must be zero or positive")
+    @ValidCoursePrice
     private BigDecimal price;
 
     @NotBlank(message = "Course level is required")
