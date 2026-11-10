@@ -1,6 +1,7 @@
 package com.ccnlthd.course_management.controller;
 
 import com.ccnlthd.course_management.dto.request.StudentRequest;
+import com.ccnlthd.course_management.dto.response.StudentCourseSummaryResponse;
 import com.ccnlthd.course_management.dto.response.StudentResponse;
 import com.ccnlthd.course_management.service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -127,5 +129,23 @@ public class StudentController {
     public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
         studentService.deleteStudent(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/summary")
+    @Operation(summary = "Xem tóm tắt học viên")
+    public ResponseEntity<com.ccnlthd.course_management.dto.response.ApiResponse<StudentCourseSummaryResponse>>
+    getStudentSummary(@PathVariable("id") Long id) {
+
+        StudentCourseSummaryResponse summary =
+                studentService.getStudentCourseSummary(id);
+
+        return ResponseEntity.ok(
+                new com.ccnlthd.course_management.dto.response.ApiResponse<>(
+                        "SUCCESS",
+                        "Lấy tóm tắt học viên thành công",
+                        summary,
+                        LocalDateTime.now()
+                )
+        );
     }
 }

@@ -36,4 +36,14 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
                or lower(c.description) like lower(concat('%', :keyword, '%'))
             """)
     List<Course> searchByKeyword(@Param("keyword") String keyword);
+
+    @Query("""
+        select count(distinct c.id)
+        from Course c
+        join c.enrollments e
+        where e.student.id = :studentId
+        """)
+    long countEnrolledCoursesByStudentId(
+            @Param("studentId") Long studentId
+    );
 }

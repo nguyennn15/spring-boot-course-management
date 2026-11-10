@@ -7,6 +7,7 @@ import com.ccnlthd.course_management.entity.Student;
 import com.ccnlthd.course_management.exception.AppException;
 import com.ccnlthd.course_management.exception.ErrorCode;
 import com.ccnlthd.course_management.exception.GlobalExceptionHandler;
+import com.ccnlthd.course_management.repository.CourseRepository;
 import com.ccnlthd.course_management.repository.EnrollmentRepository;
 import com.ccnlthd.course_management.repository.StudentRepository;
 import com.ccnlthd.course_management.service.StudentService;
@@ -47,7 +48,11 @@ class StudentCrudTests {
     void setUp() {
         studentRepository = mock(StudentRepository.class);
         enrollmentRepository = mock(EnrollmentRepository.class);
-        service = new StudentServiceImpl(studentRepository, enrollmentRepository);
+        service = new StudentServiceImpl(
+                studentRepository,
+                enrollmentRepository,
+                mock(CourseRepository.class)
+        );
     }
 
     @Test

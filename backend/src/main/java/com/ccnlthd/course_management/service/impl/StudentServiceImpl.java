@@ -1,10 +1,12 @@
 package com.ccnlthd.course_management.service.impl;
 
 import com.ccnlthd.course_management.dto.request.StudentRequest;
+import com.ccnlthd.course_management.dto.response.StudentCourseSummaryResponse;
 import com.ccnlthd.course_management.dto.response.StudentResponse;
 import com.ccnlthd.course_management.entity.Student;
 import com.ccnlthd.course_management.exception.AppException;
 import com.ccnlthd.course_management.exception.ErrorCode;
+import com.ccnlthd.course_management.repository.CourseRepository;
 import com.ccnlthd.course_management.repository.EnrollmentRepository;
 import com.ccnlthd.course_management.repository.StudentRepository;
 import com.ccnlthd.course_management.service.StudentService;
@@ -20,6 +22,7 @@ public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepository;
     private final EnrollmentRepository enrollmentRepository;
+    private final CourseRepository courseRepository;
 
     @Override
     @Transactional
@@ -77,5 +80,26 @@ public class StudentServiceImpl implements StudentService {
             throw new AppException(ErrorCode.STUDENT_HAS_ENROLLMENTS);
         }
         studentRepository.delete(student);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public StudentCourseSummaryResponse getStudentCourseSummary(
+            Long studentId
+    ) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(
+                        () -> new AppException(ErrorCode.STUDENT_NOT_FOUND)
+                );
+
+        long totalEnrolledCourses =
+                courseRepository.countEnrolledCoursesByStudentId(studentId);
+
+        return new StudentCourseSummaryResponse(
+                student.getId(),
+                student.getFullName(),
+                student.getEmail(),
+                totalEnrolledCourses
+        );
     }
 }

@@ -1,6 +1,7 @@
 package com.ccnlthd.course_management.service;
 
 import com.ccnlthd.course_management.dto.request.StudentRequest;
+import com.ccnlthd.course_management.dto.response.StudentCourseSummaryResponse;
 import com.ccnlthd.course_management.dto.response.StudentResponse;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface StudentService {
     StudentResponse updateStudent(Long id, StudentRequest request);
 
     void deleteStudent(Long id);
+
+    StudentCourseSummaryResponse getStudentCourseSummary(Long studentId);
 }
