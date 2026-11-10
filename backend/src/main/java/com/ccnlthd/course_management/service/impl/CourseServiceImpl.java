@@ -95,4 +95,12 @@ public class CourseServiceImpl implements CourseService {
         courseRepository.delete(course);
         cacheInvalidator.evictAfterCommit(id);
     }
+
+    @Override
+    public List<CourseResponse> getAllCoursesOptimized() {
+        return courseRepository.findAllWithCategoryFetch()
+                .stream()
+                .map(CourseResponse::from)
+                .toList();
+    }
 }

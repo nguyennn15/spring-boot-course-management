@@ -121,4 +121,10 @@ public class CourseController {
         courseService.deleteCourse(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/optimized")
+    @Operation(summary = "Lấy danh sách khóa học đã tối ưu truy vấn")
+    public ResponseEntity<List<CourseResponse>> getAllCoursesOptimized() {
+        return ResponseEntity.ok(courseService.getAllCoursesOptimized());
+    }
 }

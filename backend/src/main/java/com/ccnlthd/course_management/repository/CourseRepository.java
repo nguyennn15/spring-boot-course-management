@@ -36,4 +36,11 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
                or lower(c.description) like lower(concat('%', :keyword, '%'))
             """)
     List<Course> searchByKeyword(@Param("keyword") String keyword);
+
+    @Query("""
+        select c
+        from Course c
+        left join fetch c.category
+        """)
+    List<Course> findAllWithCategoryFetch();
 }

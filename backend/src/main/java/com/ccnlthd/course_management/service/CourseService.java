@@ -16,4 +16,6 @@ public interface CourseService {
     CourseResponse updateCourse(Long id, CourseRequest request);
 
     void deleteCourse(Long id);
+
+    List<CourseResponse> getAllCoursesOptimized();
 }
