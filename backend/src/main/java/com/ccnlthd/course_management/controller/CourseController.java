@@ -1,6 +1,7 @@
 package com.ccnlthd.course_management.controller;
 
 import com.ccnlthd.course_management.dto.request.CourseRequest;
+import com.ccnlthd.course_management.dto.response.CoursePricePreviewResponse;
 import com.ccnlthd.course_management.dto.response.CourseResponse;
 import com.ccnlthd.course_management.service.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -120,5 +122,22 @@ public class CourseController {
     public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
         courseService.deleteCourse(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/price-preview")
+    @Operation(summary = "Xem trước giá khóa học")
+    public ResponseEntity<com.ccnlthd.course_management.dto.response.ApiResponse<CoursePricePreviewResponse>> getPricePreview(@PathVariable Long id) {
+
+        CoursePricePreviewResponse result = courseService.getPricePreview(id);
+
+        return ResponseEntity.ok(
+                new com.ccnlthd.course_management.dto.response.ApiResponse<>(
+                        "SUCCESS",
+                        "Tính toán xem trước giá thành công",
+                        result,
+                        LocalDateTime.now()
+                )
+        );
+
     }
 }

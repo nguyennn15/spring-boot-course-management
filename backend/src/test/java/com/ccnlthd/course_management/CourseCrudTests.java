@@ -8,6 +8,8 @@ import com.ccnlthd.course_management.entity.Course;
 import com.ccnlthd.course_management.exception.AppException;
 import com.ccnlthd.course_management.exception.ErrorCode;
 import com.ccnlthd.course_management.exception.GlobalExceptionHandler;
+import com.ccnlthd.course_management.pricing.DiscountPricingStrategy;
+import com.ccnlthd.course_management.pricing.StandardPricingStrategy;
 import com.ccnlthd.course_management.repository.CategoryRepository;
 import com.ccnlthd.course_management.repository.CourseRepository;
 import com.ccnlthd.course_management.repository.EnrollmentRepository;
@@ -52,8 +54,14 @@ class CourseCrudTests {
         courseRepository = mock(CourseRepository.class);
         categoryRepository = mock(CategoryRepository.class);
         enrollmentRepository = mock(EnrollmentRepository.class);
-        service = new CourseServiceImpl(courseRepository, categoryRepository, enrollmentRepository,
-                mock(CourseDetailCacheInvalidator.class));
+        service = new CourseServiceImpl(
+                courseRepository,
+                categoryRepository,
+                enrollmentRepository,
+                mock(CourseDetailCacheInvalidator.class),
+                new StandardPricingStrategy(),
+                new DiscountPricingStrategy()
+        );
     }
 
     @Test

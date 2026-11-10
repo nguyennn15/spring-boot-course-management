@@ -8,6 +8,8 @@ import com.ccnlthd.course_management.entity.Enrollment;
 import com.ccnlthd.course_management.entity.Student;
 import com.ccnlthd.course_management.exception.AppException;
 import com.ccnlthd.course_management.exception.ErrorCode;
+import com.ccnlthd.course_management.pricing.DiscountPricingStrategy;
+import com.ccnlthd.course_management.pricing.StandardPricingStrategy;
 import com.ccnlthd.course_management.repository.CategoryRepository;
 import com.ccnlthd.course_management.repository.CourseRepository;
 import com.ccnlthd.course_management.repository.EnrollmentRepository;
@@ -34,8 +36,13 @@ class BusinessExceptionTests {
         CourseRepository courseRepository = mock(CourseRepository.class);
         CategoryRepository categoryRepository = mock(CategoryRepository.class);
         CourseServiceImpl courseService = new CourseServiceImpl(
-                courseRepository, categoryRepository, mock(EnrollmentRepository.class),
-                mock(CourseDetailCacheInvalidator.class));
+                courseRepository,
+                categoryRepository,
+                mock(EnrollmentRepository.class),
+                mock(CourseDetailCacheInvalidator.class),
+                new StandardPricingStrategy(),
+                new DiscountPricingStrategy()
+        );
 
         CourseRequest request = validCourseRequest();
         when(categoryRepository.findById(404L)).thenReturn(Optional.empty());
@@ -55,8 +62,13 @@ class BusinessExceptionTests {
         CourseRepository courseRepository = mock(CourseRepository.class);
         CategoryRepository categoryRepository = mock(CategoryRepository.class);
         CourseServiceImpl courseService = new CourseServiceImpl(
-                courseRepository, categoryRepository, mock(EnrollmentRepository.class),
-                mock(CourseDetailCacheInvalidator.class));
+                courseRepository,
+                categoryRepository,
+                mock(EnrollmentRepository.class),
+                mock(CourseDetailCacheInvalidator.class),
+                new StandardPricingStrategy(),
+                new DiscountPricingStrategy()
+        );
 
         when(courseRepository.findById(99L)).thenReturn(Optional.empty());
 
