@@ -24,6 +24,11 @@ public enum ErrorCode {
             "Student already enrolled in this course",
             HttpStatus.CONFLICT
     ),
+    ENROLLMENT_FAILED(
+            "ENROLLMENT_FAILED",
+            "Đăng ký hàng loạt thất bại: khóa học không hợp lệ hoặc đã đăng ký",
+            HttpStatus.BAD_REQUEST
+    ),
     DATA_CONFLICT("DATA_CONFLICT", "Data conflicts with an existing record", HttpStatus.CONFLICT),
     UNCATEGORIZED_EXCEPTION(
             "UNCATEGORIZED_EXCEPTION",

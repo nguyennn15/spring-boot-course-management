@@ -1,5 +1,6 @@
 package com.ccnlthd.course_management.controller;
 
+import com.ccnlthd.course_management.dto.request.BatchEnrollmentRequest;
 import com.ccnlthd.course_management.dto.request.EnrollmentRequest;
 import com.ccnlthd.course_management.dto.response.EnrollmentResponse;
 import com.ccnlthd.course_management.service.EnrollmentService;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -125,5 +127,20 @@ public class EnrollmentController {
     public ResponseEntity<Void> deleteEnrollment(@PathVariable Long id) {
         enrollmentService.deleteEnrollment(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/batch")
+    @Operation(summary = "Đăng ký nhiều khóa học trong một transaction")
+    public ResponseEntity<com.ccnlthd.course_management.dto.response.ApiResponse<Void>> enrollBatch(@Valid @RequestBody BatchEnrollmentRequest request){
+        enrollmentService.enrollMultipleCourses(request);
+
+        return ResponseEntity.ok(
+                new com.ccnlthd.course_management.dto.response.ApiResponse<Void>(
+                        "SUCCESS",
+                        "Đăng ký tất cả khóa học thành công",
+                        null,
+                        LocalDateTime.now()
+                )
+        );
     }
 }

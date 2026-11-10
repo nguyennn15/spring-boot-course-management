@@ -1,5 +1,6 @@
 package com.ccnlthd.course_management.service.impl;
 
+import com.ccnlthd.course_management.dto.request.BatchEnrollmentRequest;
 import com.ccnlthd.course_management.dto.request.EnrollmentRequest;
 import com.ccnlthd.course_management.dto.response.EnrollmentResponse;
 import com.ccnlthd.course_management.entity.Course;
@@ -91,5 +92,32 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         Enrollment enrollment = enrollmentRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ENROLLMENT_NOT_FOUND));
         enrollmentRepository.delete(enrollment);
+    }
+
+    @Override
+    @Transactional
+    public void enrollMultipleCourses(BatchEnrollmentRequest request) {
+        Student student = studentRepository.findById(request.getStudentId()).orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_FOUND));
+
+        for (Long courseId : request.getCourseIds()) {
+            Course course = courseRepository.findById(courseId).orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_FOUND));
+
+            if(!"PUBLISHED".equalsIgnoreCase(course.getStatus())) {
+                throw new AppException(ErrorCode.ENROLLMENT_FAILED);
+            }
+
+            boolean alreadyEnrolled = enrollmentRepository.findByStudent_IdAndCourse_Id(student.getId(), courseId).isPresent();
+
+            if(alreadyEnrolled) {
+                throw new AppException(ErrorCode.ENROLLMENT_FAILED);
+            }
+
+            Enrollment enrollment = new Enrollment();
+            enrollment.setStudent(student);
+            enrollment.setCourse(course);
+            enrollment.setStatus("ACTIVE");
+
+            enrollmentRepository.save(enrollment);
+        }
     }
 }
