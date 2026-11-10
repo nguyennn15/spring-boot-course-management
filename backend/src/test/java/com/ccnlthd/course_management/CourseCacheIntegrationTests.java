@@ -1,5 +1,6 @@
 package com.ccnlthd.course_management;
 
+import com.ccnlthd.course_management.dto.request.CategoryCreateRequest;
 import com.ccnlthd.course_management.dto.request.CategoryRequest;
 import com.ccnlthd.course_management.dto.request.CourseRequest;
 import com.ccnlthd.course_management.dto.response.CourseResponse;
@@ -81,7 +82,7 @@ class CourseCacheIntegrationTests {
     @BeforeEach
     void createFreshCourse() {
         categoryName = "Cache category " + UUID.randomUUID();
-        CategoryRequest category = new CategoryRequest();
+        CategoryCreateRequest category = new CategoryCreateRequest();
         category.setName(categoryName);
         categoryId = categoryService.createCategory(category).getId();
         courseId = courseService.createCourse(courseRequest("Original course")).getId();

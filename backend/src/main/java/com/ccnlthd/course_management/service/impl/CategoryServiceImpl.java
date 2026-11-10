@@ -1,6 +1,8 @@
 package com.ccnlthd.course_management.service.impl;
 
+import com.ccnlthd.course_management.dto.request.CategoryCreateRequest;
 import com.ccnlthd.course_management.dto.request.CategoryRequest;
+import com.ccnlthd.course_management.dto.response.CategoryDetailResponse;
 import com.ccnlthd.course_management.dto.response.CategoryResponse;
 import com.ccnlthd.course_management.entity.Category;
 import com.ccnlthd.course_management.exception.AppException;
@@ -25,16 +27,25 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public CategoryResponse createCategory(CategoryRequest request) {
+    public CategoryDetailResponse createCategory(CategoryCreateRequest request) {
         String name = request.getName().trim();
-        if (categoryRepository.existsByNameIgnoreCase(name)) {
+
+        if (categoryRepository.existsByName(name)) {
             throw new AppException(ErrorCode.CATEGORY_ALREADY_EXISTS);
         }
 
         Category category = new Category();
         category.setName(name);
         category.setDescription(request.getDescription());
-        return CategoryResponse.from(categoryRepository.save(category));
+
+        Category saved = categoryRepository.save(category);
+
+        return new CategoryDetailResponse(
+                saved.getId(),
+                saved.getName(),
+                saved.getDescription(),
+                0L
+        );
     }
 
     @Override

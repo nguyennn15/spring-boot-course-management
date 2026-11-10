@@ -1,6 +1,8 @@
 package com.ccnlthd.course_management.controller;
 
+import com.ccnlthd.course_management.dto.request.CategoryCreateRequest;
 import com.ccnlthd.course_management.dto.request.CategoryRequest;
+import com.ccnlthd.course_management.dto.response.CategoryDetailResponse;
 import com.ccnlthd.course_management.dto.response.CategoryResponse;
 import com.ccnlthd.course_management.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -37,26 +40,33 @@ public class CategoryController {
     @PostMapping
     @Operation(summary = "Tạo danh mục", description = "Tạo danh mục mới; tên được bỏ khoảng trắng đầu/cuối và kiểm tra trùng không phân biệt hoa/thường.")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Tạo thành công",
-                    content = @Content(schema = @Schema(implementation = CategoryResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Dữ liệu danh mục không hợp lệ",
-                    content = @Content(schema = @Schema(implementation = com.ccnlthd.course_management.dto.response.ApiResponse.class))),
-            @ApiResponse(responseCode = "409", description = "Tên danh mục đã tồn tại: CATEGORY_ALREADY_EXISTS; giữ nguyên dữ liệu danh mục. "
-                    + "Vi phạm ràng buộc CSDL, kể cả khi ghi đồng thời: DATA_CONFLICT.",
-                    content = @Content(schema = @Schema(implementation = com.ccnlthd.course_management.dto.response.ApiResponse.class),
-                            examples = {
-                                    @ExampleObject(name = "CATEGORY_ALREADY_EXISTS", value = "{\"code\":\"CATEGORY_ALREADY_EXISTS\",\"message\":\"Category name already exists\",\"result\":null,\"timestamp\":\"2026-10-15T10:00:00\"}"),
-                                    @ExampleObject(name = "DATA_CONFLICT", value = "{\"code\":\"DATA_CONFLICT\",\"message\":\"Data conflicts with an existing record\",\"result\":null,\"timestamp\":\"2026-10-15T10:00:00\"}")
-                            })),
-            @ApiResponse(responseCode = "500", description = "Lỗi không mong đợi",
-                    content = @Content(schema = @Schema(implementation = com.ccnlthd.course_management.dto.response.ApiResponse.class)))
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Tạo danh mục thành công"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Dữ liệu danh mục không hợp lệ"
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Tên danh mục đã tồn tại"
+            )
     })
-    public ResponseEntity<CategoryResponse> createCategory(
-            @Valid @RequestBody CategoryRequest request
-    ) {
+    public ResponseEntity<com.ccnlthd.course_management.dto.response.ApiResponse<CategoryDetailResponse>> createCategory(@Valid @RequestBody CategoryCreateRequest request) {
+        CategoryDetailResponse result = categoryService.createCategory(request);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(categoryService.createCategory(request));
+                .body(new com.ccnlthd.course_management.dto.response.ApiResponse<>(
+                        "SUCCESS",
+                        "Tạo danh mục thành công",
+                        result,
+                        LocalDateTime.now()
+                )
+        );
     }
+
+
+
 
     @GetMapping
     @Operation(summary = "Xem danh sách danh mục", description = "Trả về tất cả danh mục.")

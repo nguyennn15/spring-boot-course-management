@@ -1,5 +1,6 @@
 package com.ccnlthd.course_management;
 
+import com.ccnlthd.course_management.dto.request.CategoryCreateRequest;
 import com.ccnlthd.course_management.dto.request.CategoryRequest;
 import com.ccnlthd.course_management.dto.request.CourseRequest;
 import com.ccnlthd.course_management.repository.CategoryRepository;
@@ -79,7 +80,14 @@ class M15CategoryCacheEvidenceTests {
     void createTwoCoursesInOneCategory() {
         mvc = MockMvcBuilders.webAppContextSetup(context).build();
         categoryName = "M15 category " + UUID.randomUUID();
-        categoryId = categoryService.createCategory(categoryRequest(categoryName)).getId();
+        CategoryRequest category = categoryRequest(categoryName);
+
+        categoryId = categoryService.createCategory(
+                new CategoryCreateRequest(
+                        category.getName(),
+                        category.getDescription()
+                )
+        ).getId();
         courseIds = List.of(courseService.createCourse(courseRequest("M15 Course A")).getId(),
                 courseService.createCourse(courseRequest("M15 Course B")).getId());
         steps = new ArrayList<>();

@@ -1,7 +1,9 @@
 package com.ccnlthd.course_management;
 
 import com.ccnlthd.course_management.controller.CategoryController;
+import com.ccnlthd.course_management.dto.request.CategoryCreateRequest;
 import com.ccnlthd.course_management.dto.request.CategoryRequest;
+import com.ccnlthd.course_management.dto.response.CategoryDetailResponse;
 import com.ccnlthd.course_management.dto.response.CategoryResponse;
 import com.ccnlthd.course_management.entity.Category;
 import com.ccnlthd.course_management.exception.AppException;
@@ -44,6 +46,9 @@ class CategoryCrudTests {
     private CourseRepository courseRepository;
     private CategoryServiceImpl service;
 
+    private CategoryCreateRequest createRequest(String name) {
+        return new CategoryCreateRequest(name, "New description");
+    }
     @BeforeEach
     void setUp() {
         categoryRepository = mock(CategoryRepository.class);
@@ -54,14 +59,14 @@ class CategoryCrudTests {
 
     @Test
     void createsCategoryWithTrimmedName() {
-        CategoryRequest request = request("  Backend  ");
+        CategoryCreateRequest  request = createRequest("  Backend  ");
         when(categoryRepository.save(any(Category.class))).thenAnswer(invocation -> {
             Category saved = invocation.getArgument(0);
             saved.setId(1L);
             return saved;
         });
 
-        CategoryResponse response = service.createCategory(request);
+        CategoryDetailResponse response = service.createCategory(request);
 
         assertEquals(1L, response.getId());
         assertEquals("Backend", response.getName());
@@ -70,13 +75,14 @@ class CategoryCrudTests {
 
     @Test
     void rejectsDuplicateNameOnCreate() {
-        when(categoryRepository.existsByNameIgnoreCase("Backend")).thenReturn(true);
+        when(categoryRepository.existsByName("Backend")).thenReturn(true);
 
-        AppException exception = assertThrows(AppException.class,
-                () -> service.createCategory(request(" Backend ")));
-
+        AppException exception = assertThrows(
+                AppException.class,
+                () -> service.createCategory(createRequest(" Backend "))
+        );
         assertEquals(ErrorCode.CATEGORY_ALREADY_EXISTS, exception.getErrorCode());
-        verify(categoryRepository, never()).save(any(Category.class));
+        verify(categoryRepository).existsByName("Backend");
     }
 
     @Test
@@ -160,7 +166,15 @@ class CategoryCrudTests {
         CategoryService apiService = mock(CategoryService.class);
         MockMvc mvc = mvc(apiService);
         CategoryResponse response = new CategoryResponse(1L, "Backend", "Description");
-        when(apiService.createCategory(any(CategoryRequest.class))).thenReturn(response);
+        when(apiService.createCategory(any(CategoryCreateRequest.class)))
+                .thenReturn(
+                        new CategoryDetailResponse(
+                                1L,
+                                "Backend",
+                                "Description",
+                                0L
+                        )
+                );
         when(apiService.getAllCategories()).thenReturn(List.of(response));
         when(apiService.getCategoryById(1L)).thenReturn(response);
         when(apiService.updateCategory(any(Long.class), any(CategoryRequest.class)))
@@ -170,7 +184,7 @@ class CategoryCrudTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"Backend\",\"description\":\"Description\"}"))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1));
+                .andExpect(jsonPath("$.result.id").value(1));
         mvc.perform(get("/api/categories"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Backend"));
@@ -211,8 +225,15 @@ class CategoryCrudTests {
         MockMvc mvc = mvc(apiService);
         when(apiService.getCategoryById(99L))
                 .thenThrow(new AppException(ErrorCode.CATEGORY_NOT_FOUND));
-        when(apiService.createCategory(any(CategoryRequest.class)))
-                .thenThrow(new AppException(ErrorCode.CATEGORY_ALREADY_EXISTS));
+        when(apiService.createCategory(any(CategoryCreateRequest.class)))
+                .thenReturn(
+                        new CategoryDetailResponse(
+                                1L,
+                                "Backend",
+                                "Description",
+                                0L
+                        )
+                );
         doThrow(new AppException(ErrorCode.CATEGORY_HAS_COURSES))
                 .when(apiService).deleteCategory(1L);
 

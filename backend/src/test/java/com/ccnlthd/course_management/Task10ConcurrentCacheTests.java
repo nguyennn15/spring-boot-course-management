@@ -1,6 +1,7 @@
 package com.ccnlthd.course_management;
 
 import com.ccnlthd.course_management.config.CourseConsistencyGate;
+import com.ccnlthd.course_management.dto.request.CategoryCreateRequest;
 import com.ccnlthd.course_management.dto.request.CategoryRequest;
 import com.ccnlthd.course_management.dto.request.CourseRequest;
 import com.ccnlthd.course_management.service.CategoryService;
@@ -151,7 +152,12 @@ class Task10ConcurrentCacheTests {
         pool = Executors.newFixedThreadPool(2);
         oldCategory = "T10 old " + UUID.randomUUID();
         CategoryRequest category = categoryRequest(oldCategory);
-        categoryId = categoryService.createCategory(category).getId();
+        categoryId = categoryService.createCategory(
+                new CategoryCreateRequest(
+                        category.getName(),
+                        category.getDescription()
+                )
+        ).getId();
         ids = List.of(courseService.createCourse(courseRequest("T10 Course A")).getId(),
                 courseService.createCourse(courseRequest("T10 Course B")).getId());
         request("GET", coursePath(ids.get(0)), "");
