@@ -133,26 +133,33 @@ class CategoryCrudTests {
     @Test
     void deletesCategoryWithoutCourses() {
         Category category = category(1L, "Backend");
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+
+        when(categoryRepository.findById(1L))
+                .thenReturn(Optional.of(category));
 
         service.deleteCategory(1L);
 
-        verify(courseRepository).existsByCategory_Id(1L);
         verify(categoryRepository).delete(category);
+        verifyNoInteractions(courseRepository);
     }
 
     @Test
-    void rejectsDeleteWhenCategoryIsMissingOrHasCourses() {
-        when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
-        assertEquals(ErrorCode.CATEGORY_NOT_FOUND,
-                assertThrows(AppException.class, () -> service.deleteCategory(1L)).getErrorCode());
-        verifyNoInteractions(courseRepository);
+    void rejectsDeleteWhenCategoryIsMissing() {
+        when(categoryRepository.findById(1L))
+                .thenReturn(Optional.empty());
 
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category(1L, "Backend")));
-        when(courseRepository.existsByCategory_Id(1L)).thenReturn(true);
-        assertEquals(ErrorCode.CATEGORY_HAS_COURSES,
-                assertThrows(AppException.class, () -> service.deleteCategory(1L)).getErrorCode());
-        verify(categoryRepository, never()).delete(any(Category.class));
+        AppException exception = assertThrows(
+                AppException.class,
+                () -> service.deleteCategory(1L)
+        );
+
+        assertEquals(
+                ErrorCode.CATEGORY_NOT_FOUND,
+                exception.getErrorCode()
+        );
+
+        verify(categoryRepository, never())
+                .delete(any(Category.class));
     }
 
     @Test
@@ -213,7 +220,7 @@ class CategoryCrudTests {
                 .thenThrow(new AppException(ErrorCode.CATEGORY_NOT_FOUND));
         when(apiService.createCategory(any(CategoryRequest.class)))
                 .thenThrow(new AppException(ErrorCode.CATEGORY_ALREADY_EXISTS));
-        doThrow(new AppException(ErrorCode.CATEGORY_HAS_COURSES))
+        doThrow(new AppException(ErrorCode.DATA_CONFLICT))
                 .when(apiService).deleteCategory(1L);
 
         mvc.perform(get("/api/categories/{id}", 99L))
@@ -226,7 +233,7 @@ class CategoryCrudTests {
                 .andExpect(jsonPath("$.code").value("CATEGORY_ALREADY_EXISTS"));
         mvc.perform(delete("/api/categories/{id}", 1L))
                 .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.code").value("CATEGORY_HAS_COURSES"));
+                .andExpect(jsonPath("$.code").value("DATA_CONFLICT"));
     }
 
     private MockMvc mvc(CategoryService apiService) {

@@ -1,11 +1,6 @@
 package com.ccnlthd.course_management.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,7 +28,7 @@ public class Category {
     @Column(length = 500)
     private String description;
 
-    @jakarta.persistence.OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Course> courses = new ArrayList<>();
 
     @CreationTimestamp
@@ -43,4 +38,14 @@ public class Category {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    public void addCourse(Course course) {
+        courses.add(course);
+        course.setCategory(this);
+    }
+
+    public void removeCourse(Course course) {
+        courses.remove(course);
+        course.setCategory(null);
+    }
 }

@@ -111,23 +111,29 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Xóa danh mục", description = "Chỉ xóa danh mục chưa có khóa học tham chiếu.")
+    @Operation(
+            summary = "Xóa danh mục",
+            description = "Xóa danh mục và các khóa học thuộc danh mục."
+    )
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Xóa thành công, không có nội dung trả về"),
-            @ApiResponse(responseCode = "404", description = "Không tìm thấy danh mục (CATEGORY_NOT_FOUND)",
-                    content = @Content(schema = @Schema(implementation = com.ccnlthd.course_management.dto.response.ApiResponse.class))),
-            @ApiResponse(responseCode = "409", description = "Danh mục có ít nhất một khóa học: CATEGORY_HAS_COURSES; giữ nguyên danh mục và các khóa học. "
-                    + "Vi phạm ràng buộc CSDL, kể cả khi ghi đồng thời: DATA_CONFLICT.",
-                    content = @Content(schema = @Schema(implementation = com.ccnlthd.course_management.dto.response.ApiResponse.class),
-                            examples = {
-                                    @ExampleObject(name = "CATEGORY_HAS_COURSES", value = "{\"code\":\"CATEGORY_HAS_COURSES\",\"message\":\"Category has courses\",\"result\":null,\"timestamp\":\"2026-10-15T10:00:00\"}"),
-                                    @ExampleObject(name = "DATA_CONFLICT", value = "{\"code\":\"DATA_CONFLICT\",\"message\":\"Data conflicts with an existing record\",\"result\":null,\"timestamp\":\"2026-10-15T10:00:00\"}")
-                            })),
-            @ApiResponse(responseCode = "500", description = "Lỗi không mong đợi",
-                    content = @Content(schema = @Schema(implementation = com.ccnlthd.course_management.dto.response.ApiResponse.class)))
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Xóa danh mục và các khóa học thành công"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Không tìm thấy danh mục"
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Dữ liệu còn được tham chiếu, ví dụ khóa học có lượt ghi danh"
+            )
     })
-    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCategory(
+            @PathVariable("id") Long id
+    ) {
         categoryService.deleteCategory(id);
+
         return ResponseEntity.noContent().build();
     }
 }

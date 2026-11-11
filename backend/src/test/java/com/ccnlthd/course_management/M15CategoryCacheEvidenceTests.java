@@ -192,18 +192,53 @@ class M15CategoryCacheEvidenceTests {
     }
 
     @Test
-    void deletingCategoryWithTwoCoursesReturns409AndPreservesDatabaseAndCache() throws IOException {
+    void deletingCategoryWithTwoCoursesReturns204AndCascadesDelete()
+            throws IOException {
+
+        // Trước khi xóa: danh mục đang có đúng hai khóa học.
+        assertEquals(
+                2,
+                courseRepository.findByCategory_Id(categoryId).size()
+        );
+
+        // Gọi API xem hai khóa học để đưa dữ liệu vào cache.
         primeBoth();
-        List<String> before = courseIds.stream().map(this::cached).toList();
-        MvcResult conflict = request(delete("/api/categories/{id}", categoryId), 409,
-                "category-delete-conflict");
-        assertTrue(conflict.getResponse().getContentAsString().contains("CATEGORY_HAS_COURSES"));
-        assertTrue(categoryRepository.existsById(categoryId));
-        assertTrue(courseIds.stream().allMatch(courseRepository::existsById));
-        assertEquals(before, courseIds.stream().map(this::cached).toList());
-        assertTrue(lastActionSql.statements().stream().noneMatch(statement ->
-                statement.stripLeading().toLowerCase(java.util.Locale.ROOT).startsWith("delete")));
-        M15Evidence.write("category-delete-conflict", 600, steps);
+
+        // Xóa danh mục: yêu cầu thành công với HTTP 204.
+        request(
+                delete("/api/categories/{id}", categoryId),
+                204,
+                "category-delete-cascade"
+        );
+
+        // Danh mục đã bị xóa khỏi DB.
+        assertFalse(categoryRepository.existsById(categoryId));
+
+        // Cả hai khóa học cũng đã bị xóa khỏi DB.
+        assertTrue(
+                courseIds.stream()
+                        .noneMatch(courseRepository::existsById)
+        );
+
+        // Cache của cả hai khóa học đã được xóa.
+        // exists() là helper kiểm tra key Redis trong file này.
+        assertTrue(
+                courseIds.stream()
+                        .noneMatch(this::exists)
+        );
+
+        // Hibernate đã phát sinh câu lệnh DELETE.
+        assertTrue(
+                lastActionSql.statements().stream()
+                        .anyMatch(statement ->
+                                statement.stripLeading()
+                                        .toLowerCase(java.util.Locale.ROOT)
+                                        .startsWith("delete")
+                        )
+        );
+
+        // Ghi kết quả bằng lớp hỗ trợ của file M15.
+        M15Evidence.write("category-delete-cascade", 600, steps);
     }
 
     private void primeBoth() {

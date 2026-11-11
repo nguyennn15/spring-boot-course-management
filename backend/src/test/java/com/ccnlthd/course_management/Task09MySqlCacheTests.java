@@ -230,18 +230,44 @@ class Task09MySqlCacheTests {
     }
 
     @Test
-    void deletingCategoryWithTwoCoursesReturns409AndPreservesDatabaseAndCache() throws IOException {
+    void deletingCategoryWithTwoCoursesReturns204AndCascadesDelete()
+            throws IOException {
+
+        assertEquals(
+                2,
+                courseRepository.findByCategory_Id(categoryId).size()
+        );
+
         primeBoth();
-        List<String> before = courseIds.stream().map(this::cached).toList();
-        MvcResult conflict = request(delete("/api/categories/{id}", categoryId), 409,
-                "category-delete-conflict");
-        assertTrue(conflict.getResponse().getContentAsString().contains("CATEGORY_HAS_COURSES"));
-        assertTrue(categoryRepository.existsById(categoryId));
-        assertTrue(courseIds.stream().allMatch(courseRepository::existsById));
-        assertEquals(before, courseIds.stream().map(this::cached).toList());
-        assertTrue(lastActionSql.statements().stream().noneMatch(statement ->
-                statement.stripLeading().toLowerCase(java.util.Locale.ROOT).startsWith("delete")));
-        evidence.write("category-delete-conflict", 600, steps);
+
+        request(
+                delete("/api/categories/{id}", categoryId),
+                204,
+                "category-delete-cascade"
+        );
+
+        assertFalse(categoryRepository.existsById(categoryId));
+
+        assertTrue(
+                courseIds.stream()
+                        .noneMatch(courseRepository::existsById)
+        );
+
+        assertTrue(
+                courseIds.stream()
+                        .noneMatch(this::exists)
+        );
+
+        assertTrue(
+                lastActionSql.statements().stream()
+                        .anyMatch(statement ->
+                                statement.stripLeading()
+                                        .toLowerCase(java.util.Locale.ROOT)
+                                        .startsWith("delete")
+                        )
+        );
+
+        evidence.write("category-delete-cascade", 600, steps);
     }
 
     @Test

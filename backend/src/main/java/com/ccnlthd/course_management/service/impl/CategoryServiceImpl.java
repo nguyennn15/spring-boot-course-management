@@ -74,10 +74,12 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public void deleteCategory(Long id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
-        if (courseRepository.existsByCategory_Id(id)) {
-            throw new AppException(ErrorCode.CATEGORY_HAS_COURSES);
-        }
+                .orElseThrow(
+                        () -> new AppException(ErrorCode.CATEGORY_NOT_FOUND)
+                );
+
         categoryRepository.delete(category);
+
+        cacheInvalidator.clearAfterCommit();
     }
 }
