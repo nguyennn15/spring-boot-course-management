@@ -16,4 +16,8 @@ public interface CourseService {
     CourseResponse updateCourse(Long id, CourseRequest request);
 
     void deleteCourse(Long id);
+
+    void entryPointMethod(Long courseId);
+
+    void internalTransactionMethod(Long courseId);
 }

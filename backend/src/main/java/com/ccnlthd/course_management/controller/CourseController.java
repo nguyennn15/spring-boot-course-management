@@ -121,4 +121,12 @@ public class CourseController {
         courseService.deleteCourse(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{id}/transaction-proxy-demo")
+    @Operation(summary = "Kiểm chứng self-invocation bỏ qua transaction proxy")
+    public ResponseEntity<Void> transactionProxyDemo(@PathVariable("id") Long id) {
+        courseService.entryPointMethod(id);
+
+        return ResponseEntity.noContent().build();
+    }
 }

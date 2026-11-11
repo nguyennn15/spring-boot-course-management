@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.List;
 
@@ -94,5 +95,26 @@ public class CourseServiceImpl implements CourseService {
         }
         courseRepository.delete(course);
         cacheInvalidator.evictAfterCommit(id);
+    }
+
+    @Override
+    public void entryPointMethod(Long courseId) {
+        this.internalTransactionMethod(courseId);
+    }
+
+    @Override
+    @Transactional
+    public void internalTransactionMethod(Long courseId) {
+        System.out.println("DE 7 - Truoc khi save, transaction active = " + TransactionSynchronizationManager.isActualTransactionActive());
+
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_FOUND));
+
+        course.setTitle("Title Updated Inside Internal Method");
+
+        courseRepository.save(course);
+
+        System.out.println("DE 7 - Sau khi save, transaction active = " + TransactionSynchronizationManager.isActualTransactionActive());
+
+        throw new RuntimeException("Lỗi chủ động trong internalTransactionMethod");
     }
 }
