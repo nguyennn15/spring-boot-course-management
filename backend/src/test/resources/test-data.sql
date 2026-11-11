@@ -5,11 +5,12 @@ VALUES
     (1, 'Backend', 'Courses about server-side development and APIs.', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     (2, 'Database', 'Courses about relational databases and data persistence.', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
-INSERT INTO courses (id, category_id, title, description, price, level, status, created_at, updated_at)
+INSERT INTO courses (id, category_id, title, description, price, level, status, created_at, updated_at,rating)
 VALUES
-    (1, 1, 'Spring Boot Fundamentals', 'Build REST APIs with Spring Boot and layered architecture.', 499000.00, 'BEGINNER', 'PUBLISHED', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (2, 1, 'Spring Data JPA Essentials', 'Practice entities, repositories, relationships, and JPQL queries.', 599000.00, 'INTERMEDIATE', 'PUBLISHED', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (3, 2, 'PostgreSQL for Beginners', 'Learn tables, keys, constraints, and common SQL queries.', 399000.00, 'BEGINNER', 'DRAFT', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+    (1, 1, 'Spring Boot Fundamentals', 'Build REST APIs with Spring Boot and layered architecture.', 499000.00, 'BEGINNER', 'PUBLISHED', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0.00),
+    (2, 1, 'Spring Data JPA Essentials', 'Practice entities, repositories, relationships, and JPQL queries.', 599000.00, 'INTERMEDIATE', 'PUBLISHED', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0.00),
+    (3, 2, 'PostgreSQL for Beginners', 'Learn tables, keys, constraints, and common SQL queries.', 399000.00, 'BEGINNER', 'DRAFT', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0.00);
+    (3, 2, 'PostgreSQL for Beginners', 'Learn tables, keys, constraints, and common SQL queries.', 399000.00, 'BEGINNER', 'DRAFT', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0.00);
 
 INSERT INTO students (id, full_name, email, phone, created_at, updated_at)
 VALUES

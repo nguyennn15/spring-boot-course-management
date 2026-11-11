@@ -44,6 +44,9 @@ public class Course {
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal price;
 
+    @Column(name = "rating", nullable = false, precision = 3, scale = 2)
+    private BigDecimal rating = BigDecimal.ZERO;
+
     @Column(length = 50)
     private String level;
 
