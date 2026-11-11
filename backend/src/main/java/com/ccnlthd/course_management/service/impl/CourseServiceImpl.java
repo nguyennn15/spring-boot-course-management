@@ -2,6 +2,7 @@ package com.ccnlthd.course_management.service.impl;
 
 import com.ccnlthd.course_management.dto.request.CourseRequest;
 import com.ccnlthd.course_management.dto.response.CourseResponse;
+import com.ccnlthd.course_management.dto.response.PageResponse;
 import com.ccnlthd.course_management.entity.Category;
 import com.ccnlthd.course_management.entity.Course;
 import com.ccnlthd.course_management.exception.AppException;
@@ -13,6 +14,8 @@ import com.ccnlthd.course_management.service.CourseDetailCacheInvalidator;
 import com.ccnlthd.course_management.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -94,5 +97,26 @@ public class CourseServiceImpl implements CourseService {
         }
         courseRepository.delete(course);
         cacheInvalidator.evictAfterCommit(id);
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public PageResponse<CourseResponse> searchCourses(String keyword, Long categoryId, Pageable pageable){
+        Page<Course> coursePage = courseRepository.searchCourses(keyword, categoryId, pageable);
+
+        List<CourseResponse> content = coursePage.getContent()
+                .stream()
+                .map(CourseResponse::from)
+                .toList();
+
+        return new PageResponse<>(
+                content,
+                coursePage.getNumber(),
+                coursePage.getSize(),
+                coursePage.getTotalElements(),
+                coursePage.getTotalPages(),
+                coursePage.isLast()
+        );
     }
 }

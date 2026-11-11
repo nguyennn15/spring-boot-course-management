@@ -2,6 +2,7 @@ package com.ccnlthd.course_management.controller;
 
 import com.ccnlthd.course_management.dto.request.CourseRequest;
 import com.ccnlthd.course_management.dto.response.CourseResponse;
+import com.ccnlthd.course_management.dto.response.PageResponse;
 import com.ccnlthd.course_management.service.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -13,17 +14,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -120,5 +118,34 @@ public class CourseController {
     public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
         courseService.deleteCourse(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/search")
+    @Operation(summary = "Tìm kiếm và phân trang khóa học")
+    public ResponseEntity<com.ccnlthd.course_management.dto.response.ApiResponse<PageResponse<CourseResponse>>> searchCourses(
+            @RequestParam(name = "keyword", required = false)
+            String keyword,
+
+            @RequestParam(name = "categoryId", required = false)
+            Long categoryId,
+
+            @ParameterObject
+            @PageableDefault(page = 0, size = 5, sort = "id")
+            Pageable pageable
+    ) {
+        PageResponse<CourseResponse> result = courseService.searchCourses(
+                keyword,
+                categoryId,
+                pageable
+        );
+
+        return ResponseEntity.ok(
+                new com.ccnlthd.course_management.dto.response.ApiResponse<>(
+                        "SUCCESS",
+                        "Tìm kiếm khóa học thành công",
+                        result,
+                        LocalDateTime.now()
+                )
+        );
     }
 }
