@@ -2,7 +2,9 @@ package com.ccnlthd.course_management.controller;
 
 import com.ccnlthd.course_management.dto.request.EnrollmentRequest;
 import com.ccnlthd.course_management.dto.response.EnrollmentResponse;
+import com.ccnlthd.course_management.dto.response.RegistrationSessionResponse;
 import com.ccnlthd.course_management.service.EnrollmentService;
+import com.ccnlthd.course_management.service.impl.RegistrationSessionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -33,6 +36,8 @@ import java.util.List;
 public class EnrollmentController {
 
     private final EnrollmentService enrollmentService;
+    private final RegistrationSessionService registrationSessionService;
+
 
     @PostMapping
     @Operation(summary = "Tạo lượt ghi danh", description = "Ghi danh học viên vào khóa học; studentId và courseId bắt buộc lớn hơn 0; status chỉ nhận ACTIVE hoặc COMPLETED. Mỗi cặp studentId/courseId chỉ có một lượt ghi danh, bất kể trạng thái.")
@@ -125,5 +130,20 @@ public class EnrollmentController {
     public ResponseEntity<Void> deleteEnrollment(@PathVariable Long id) {
         enrollmentService.deleteEnrollment(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/session/test-scope")
+    @Operation(summary = "Kiểm tra Bean Scope")
+    public ResponseEntity<com.ccnlthd.course_management.dto.response.ApiResponse<RegistrationSessionResponse>> testScope() {
+        RegistrationSessionResponse result = registrationSessionService.testBeanScope();
+
+        return ResponseEntity.ok(
+                new com.ccnlthd.course_management.dto.response.ApiResponse<>(
+                        "SUCCESS",
+                        "Kiểm tra Bean Scope hoàn tất",
+                        result,
+                        LocalDateTime.now()
+                )
+        );
     }
 }

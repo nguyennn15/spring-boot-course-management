@@ -14,6 +14,7 @@ import com.ccnlthd.course_management.repository.EnrollmentRepository;
 import com.ccnlthd.course_management.repository.StudentRepository;
 import com.ccnlthd.course_management.service.EnrollmentService;
 import com.ccnlthd.course_management.service.impl.EnrollmentServiceImpl;
+import com.ccnlthd.course_management.service.impl.RegistrationSessionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -305,7 +306,10 @@ class EnrollmentCrudTests {
     private MockMvc mvc(EnrollmentService apiService) {
         LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
         validator.afterPropertiesSet();
-        return MockMvcBuilders.standaloneSetup(new EnrollmentController(apiService))
+        return MockMvcBuilders.standaloneSetup(new EnrollmentController(
+                        apiService,
+                        mock(RegistrationSessionService.class)
+                ))
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .setValidator(validator)
                 .build();

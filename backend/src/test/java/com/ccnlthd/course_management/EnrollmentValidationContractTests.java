@@ -7,6 +7,7 @@ import com.ccnlthd.course_management.dto.response.EnrollmentResponse;
 import com.ccnlthd.course_management.exception.GlobalExceptionHandler;
 import com.ccnlthd.course_management.service.CourseService;
 import com.ccnlthd.course_management.service.EnrollmentService;
+import com.ccnlthd.course_management.service.impl.RegistrationSessionService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -57,7 +58,10 @@ class EnrollmentValidationContractTests {
         validator = new LocalValidatorFactoryBean();
         validator.afterPropertiesSet();
         mvc = MockMvcBuilders.standaloneSetup(
-                        new EnrollmentController(enrollments), new CourseController(courses))
+                        new EnrollmentController(
+                                enrollments,
+                                mock(RegistrationSessionService.class)
+                        ), new CourseController(courses))
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .setValidator(validator).build();
     }
