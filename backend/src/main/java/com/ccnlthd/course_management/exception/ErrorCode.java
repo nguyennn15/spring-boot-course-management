@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ErrorCode {
 
-    VALIDATION_FAILED("VALIDATION_FAILED", "Request data is invalid", HttpStatus.BAD_REQUEST),
+    VALIDATION_FAILED("VALIDATION_FAILED", "Dữ liệu yêu cầu không hợp lệ", HttpStatus.BAD_REQUEST),
     RESOURCE_NOT_FOUND("RESOURCE_NOT_FOUND", "Resource not found", HttpStatus.NOT_FOUND),
     CATEGORY_NOT_FOUND("CATEGORY_NOT_FOUND", "Category not found", HttpStatus.NOT_FOUND),
     CATEGORY_ALREADY_EXISTS("CATEGORY_ALREADY_EXISTS", "Category name already exists", HttpStatus.CONFLICT),

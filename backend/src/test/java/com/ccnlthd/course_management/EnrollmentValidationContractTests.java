@@ -141,9 +141,17 @@ class EnrollmentValidationContractTests {
     }
 
     static String courseBody(String category) {
-        String prefix = "missing".equals(category) ? "" : "\"categoryId\":" + category + ",";
-        return "{" + prefix + "\"title\":\"Validation course\",\"description\":\"Contract test\","
-                + "\"price\":100,\"level\":\"BEGINNER\",\"status\":\"DRAFT\"}";
+        String prefix = "missing".equals(category)
+                ? ""
+                : "\"categoryId\":" + category + ",";
+
+        return "{" + prefix
+                + "\"code\":\"CS-1001\","
+                + "\"title\":\"Validation course\","
+                + "\"description\":\"Contract test\","
+                + "\"price\":100,"
+                + "\"level\":\"BEGINNER\","
+                + "\"status\":\"DRAFT\"}";
     }
 
     static MvcResult rejects(MockMvc mvc, String label, String method, String root,
@@ -162,7 +170,9 @@ class EnrollmentValidationContractTests {
 
     private static void mvcResultChecks(MvcResult result) throws Exception {
         jsonPath("$.code").value("VALIDATION_FAILED").match(result);
-        jsonPath("$.message").value("Request data is invalid").match(result);
+        jsonPath("$.message")
+                .value("Dữ liệu yêu cầu không hợp lệ")
+                .match(result);
         jsonPath("$.timestamp").exists().match(result);
         jsonPath("$.result").isArray().match(result);
         jsonPath("$.result[*].message").value(everyItem(not(emptyOrNullString()))).match(result);

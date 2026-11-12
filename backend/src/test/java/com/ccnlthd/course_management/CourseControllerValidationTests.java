@@ -78,7 +78,7 @@ class CourseControllerValidationTests {
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("VALIDATION_FAILED"))
-                .andExpect(jsonPath("$.message").value("Request data is invalid"))
+                .andExpect(jsonPath("$.message").value("Dữ liệu yêu cầu không hợp lệ"))
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andExpect(jsonPath("$.result").isArray())
                 .andExpect(jsonPath("$.result[*].field")
@@ -108,10 +108,16 @@ class CourseControllerValidationTests {
         System.out.println("M09_WEB_PASS case=valid serviceInteractions=1");
     }
 
-    private String json(String title, int price, String level, String status) {
+    private String json(
+            String title,
+            int price,
+            String level,
+            String status
+    ) {
         return """
-                {"categoryId":1,"title":"%s","description":"M09 validation test",
-                 "price":%d,"level":"%s","status":"%s"}
-                """.formatted(title, price, level, status);
+            {"code":"CS-1001","categoryId":1,"title":"%s",
+             "description":"M09 validation test",
+             "price":%d,"level":"%s","status":"%s"}
+            """.formatted(title, price, level, status);
     }
 }

@@ -29,12 +29,13 @@ class GlobalExceptionHandlerTests {
 
     private static final String VALID_COURSE_JSON = """
             {
-              "categoryId": 1,
-              "title": "Spring Boot Fundamentals",
-              "description": "Build REST APIs with Spring Boot.",
-              "price": 499000,
-              "level": "BEGINNER",
-              "status": "PUBLISHED"
+               "code": "CS-1001",
+               "categoryId": 1,
+                "title": "Spring Boot Fundamentals",
+                "description": "Build REST APIs with Spring Boot.",
+                "price": 499000,
+                "level": "BEGINNER",
+                "status": "PUBLISHED"
             }
             """;
 
