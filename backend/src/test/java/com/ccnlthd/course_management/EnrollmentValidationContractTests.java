@@ -162,7 +162,7 @@ class EnrollmentValidationContractTests {
 
     private static void mvcResultChecks(MvcResult result) throws Exception {
         jsonPath("$.code").value("VALIDATION_FAILED").match(result);
-        jsonPath("$.message").value("Request data is invalid").match(result);
+        jsonPath("$.message").value("Dữ liệu yêu cầu không hợp lệ").match(result);
         jsonPath("$.timestamp").exists().match(result);
         jsonPath("$.result").isArray().match(result);
         jsonPath("$.result[*].message").value(everyItem(not(emptyOrNullString()))).match(result);

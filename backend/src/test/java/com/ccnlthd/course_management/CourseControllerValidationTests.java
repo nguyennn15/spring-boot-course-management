@@ -78,7 +78,7 @@ class CourseControllerValidationTests {
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("VALIDATION_FAILED"))
-                .andExpect(jsonPath("$.message").value("Request data is invalid"))
+                .andExpect(jsonPath("$.message").value("Dữ liệu yêu cầu không hợp lệ"))
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andExpect(jsonPath("$.result").isArray())
                 .andExpect(jsonPath("$.result[*].field")

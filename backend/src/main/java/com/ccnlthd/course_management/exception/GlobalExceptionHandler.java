@@ -1,6 +1,7 @@
 package com.ccnlthd.course_management.exception;
 
 import com.ccnlthd.course_management.dto.response.ApiResponse;
+import com.ccnlthd.course_management.dto.response.ValidationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -31,24 +32,26 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<List<Map<String, String>>>> handleValidationException(
-            MethodArgumentNotValidException exception
-    ) {
-        List<Map<String, String>> errors = exception.getBindingResult()
+    public ResponseEntity<ApiResponse<List<ValidationError>>> handleValidationException(MethodArgumentNotValidException exception) {
+        List<ValidationError> errors = exception.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(error -> Map.of(
-                        "field", error.getField(),
-                        "message", error.getDefaultMessage()))
+                .map(error -> new ValidationError(
+                        error.getField(),
+                        error.getDefaultMessage()
+                ))
                 .toList();
 
         return ResponseEntity
                 .status(ErrorCode.VALIDATION_FAILED.getHttpStatus())
-                .body(new ApiResponse<>(
-                        ErrorCode.VALIDATION_FAILED.getCode(),
-                        ErrorCode.VALIDATION_FAILED.getMessage(),
-                        errors,
-                        LocalDateTime.now()));
+                .body(
+                        new ApiResponse<>(
+                                ErrorCode.VALIDATION_FAILED.getCode(),
+                                ErrorCode.VALIDATION_FAILED.getMessage(),
+                                errors,
+                                LocalDateTime.now()
+                        )
+                );
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
