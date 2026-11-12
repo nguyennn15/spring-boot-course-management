@@ -1,6 +1,7 @@
 package com.ccnlthd.course_management.service.impl;
 
 import com.ccnlthd.course_management.dto.request.CourseRequest;
+import com.ccnlthd.course_management.dto.response.CourseItemResponse;
 import com.ccnlthd.course_management.dto.response.CourseResponse;
 import com.ccnlthd.course_management.entity.Category;
 import com.ccnlthd.course_management.entity.Course;
@@ -94,5 +95,18 @@ public class CourseServiceImpl implements CourseService {
         }
         courseRepository.delete(course);
         cacheInvalidator.evictAfterCommit(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CourseItemResponse> getActiveCourses() {
+        return courseRepository.findByStatus("ACTIVE")
+                .stream()
+                .map(course -> new CourseItemResponse(
+                        course.getId(),
+                        course.getTitle(),
+                        course.getCategory().getName()
+                ))
+                .toList();
     }
 }

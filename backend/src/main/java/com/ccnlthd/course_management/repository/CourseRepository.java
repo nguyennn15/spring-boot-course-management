@@ -36,4 +36,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
                or lower(c.description) like lower(concat('%', :keyword, '%'))
             """)
     List<Course> searchByKeyword(@Param("keyword") String keyword);
+
+    @EntityGraph(attributePaths = "category")
+    List<Course> findByStatus(String status);
 }

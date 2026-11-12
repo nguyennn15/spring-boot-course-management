@@ -1,6 +1,7 @@
 package com.ccnlthd.course_management.service;
 
 import com.ccnlthd.course_management.dto.request.CourseRequest;
+import com.ccnlthd.course_management.dto.response.CourseItemResponse;
 import com.ccnlthd.course_management.dto.response.CourseResponse;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface CourseService {
     CourseResponse updateCourse(Long id, CourseRequest request);
 
     void deleteCourse(Long id);
+
+    List<CourseItemResponse> getActiveCourses();
 }

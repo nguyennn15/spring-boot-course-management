@@ -1,6 +1,7 @@
 package com.ccnlthd.course_management.controller;
 
 import com.ccnlthd.course_management.dto.request.CourseRequest;
+import com.ccnlthd.course_management.dto.response.CourseItemResponse;
 import com.ccnlthd.course_management.dto.response.CourseResponse;
 import com.ccnlthd.course_management.service.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -120,5 +121,13 @@ public class CourseController {
     public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
         courseService.deleteCourse(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/active-list")
+    @Operation(summary = "Lấy khóa học ACTIVE kèm danh mục")
+    public ResponseEntity<List<CourseItemResponse>> getActiveCourses() {
+        return ResponseEntity.ok(
+                courseService.getActiveCourses()
+        );
     }
 }
