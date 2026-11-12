@@ -13,6 +13,7 @@ import com.ccnlthd.course_management.repository.CourseRepository;
 import com.ccnlthd.course_management.repository.EnrollmentRepository;
 import com.ccnlthd.course_management.service.CourseService;
 import com.ccnlthd.course_management.service.CourseDetailCacheInvalidator;
+import com.ccnlthd.course_management.service.impl.CourseFeeService;
 import com.ccnlthd.course_management.service.impl.CourseServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -165,7 +166,7 @@ class CourseCrudTests {
         CourseService apiService = mock(CourseService.class);
         LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
         validator.afterPropertiesSet();
-        MockMvc mvc = MockMvcBuilders.standaloneSetup(new CourseController(apiService))
+        MockMvc mvc = MockMvcBuilders.standaloneSetup(new CourseController(apiService, mock(CourseFeeService.class)))
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .setValidator(validator)
                 .build();
@@ -201,7 +202,7 @@ class CourseCrudTests {
         CourseService apiService = mock(CourseService.class);
         LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
         validator.afterPropertiesSet();
-        MockMvc mvc = MockMvcBuilders.standaloneSetup(new CourseController(apiService))
+        MockMvc mvc = MockMvcBuilders.standaloneSetup(new CourseController(apiService, mock(CourseFeeService.class)))
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .setValidator(validator)
                 .build();
@@ -217,7 +218,7 @@ class CourseCrudTests {
     @Test
     void deleteWithEnrollmentsReturnsConflict() throws Exception {
         CourseService apiService = mock(CourseService.class);
-        MockMvc mvc = MockMvcBuilders.standaloneSetup(new CourseController(apiService))
+        MockMvc mvc = MockMvcBuilders.standaloneSetup(new CourseController(apiService, mock(CourseFeeService.class)))
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
         doThrow(new AppException(ErrorCode.COURSE_HAS_ENROLLMENTS))

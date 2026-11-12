@@ -1,8 +1,10 @@
 package com.ccnlthd.course_management.controller;
 
 import com.ccnlthd.course_management.dto.request.CourseRequest;
+import com.ccnlthd.course_management.dto.response.CourseFeeResponse;
 import com.ccnlthd.course_management.dto.response.CourseResponse;
 import com.ccnlthd.course_management.service.CourseService;
+import com.ccnlthd.course_management.service.impl.CourseFeeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,15 +17,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -33,6 +29,7 @@ import java.util.List;
 public class CourseController {
 
     private final CourseService courseService;
+    private final CourseFeeService courseFeeService;
 
     @PostMapping
     @Operation(summary = "Tạo khóa học", description = "Tạo khóa học trong danh mục đã tồn tại.")
@@ -120,5 +117,20 @@ public class CourseController {
     public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
         courseService.deleteCourse(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/calculate-fee")
+    @Operation(summary = "Tính học phí theo chính sách")
+    public ResponseEntity<com.ccnlthd.course_management.dto.response.ApiResponse<CourseFeeResponse>> calculateFee(@PathVariable("id") Long id, @RequestParam(name = "policy", defaultValue = "standard") String policy) {
+        CourseFeeResponse result = courseFeeService.calculateFee(id, policy);
+
+        return ResponseEntity.ok(
+                new com.ccnlthd.course_management.dto.response.ApiResponse<>(
+                        "SUCCESS",
+                        "Tính toán học phí thành công",
+                        result,
+                        LocalDateTime.now()
+                )
+        );
     }
 }

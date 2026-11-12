@@ -5,6 +5,7 @@ import com.ccnlthd.course_management.dto.request.CourseRequest;
 import com.ccnlthd.course_management.dto.response.CourseResponse;
 import com.ccnlthd.course_management.exception.GlobalExceptionHandler;
 import com.ccnlthd.course_management.service.CourseService;
+import com.ccnlthd.course_management.service.impl.CourseFeeService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,7 @@ class CourseControllerValidationTests {
         validator = new LocalValidatorFactoryBean();
         validator.afterPropertiesSet();
         mockMvc = MockMvcBuilders
-                .standaloneSetup(new CourseController(courseService))
+                .standaloneSetup(new CourseController(courseService, mock(CourseFeeService.class)))
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .setValidator(validator)
                 .build();
