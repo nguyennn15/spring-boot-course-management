@@ -1,5 +1,6 @@
 package com.ccnlthd.course_management.service.impl;
 
+import com.ccnlthd.course_management.dto.projection.CourseSummaryProjection;
 import com.ccnlthd.course_management.dto.request.CourseRequest;
 import com.ccnlthd.course_management.dto.response.CourseResponse;
 import com.ccnlthd.course_management.entity.Category;
@@ -94,5 +95,11 @@ public class CourseServiceImpl implements CourseService {
         }
         courseRepository.delete(course);
         cacheInvalidator.evictAfterCommit(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CourseSummaryProjection> getCourseSummaries() {
+        return courseRepository.findCourseSummaries();
     }
 }

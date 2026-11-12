@@ -1,5 +1,6 @@
 package com.ccnlthd.course_management.controller;
 
+import com.ccnlthd.course_management.dto.projection.CourseSummaryProjection;
 import com.ccnlthd.course_management.dto.request.CourseRequest;
 import com.ccnlthd.course_management.dto.response.CourseResponse;
 import com.ccnlthd.course_management.service.CourseService;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -120,5 +122,20 @@ public class CourseController {
     public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
         courseService.deleteCourse(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/summary")
+    @Operation(summary = "Lấy danh sách khóa học rút gọn")
+    public ResponseEntity<com.ccnlthd.course_management.dto.response.ApiResponse<List<CourseSummaryProjection>>> getCourseSummaries() {
+        List<CourseSummaryProjection> result = courseService.getCourseSummaries();
+
+        return ResponseEntity.ok(
+                new com.ccnlthd.course_management.dto.response.ApiResponse<>(
+                        "SUCCESS",
+                        "Lấy danh sách khóa học rút gọn thành công",
+                        result,
+                        LocalDateTime.now()
+                )
+        );
     }
 }

@@ -1,5 +1,6 @@
 package com.ccnlthd.course_management.repository;
 
+import com.ccnlthd.course_management.dto.projection.CourseSummaryProjection;
 import com.ccnlthd.course_management.entity.Course;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -36,4 +37,14 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
                or lower(c.description) like lower(concat('%', :keyword, '%'))
             """)
     List<Course> searchByKeyword(@Param("keyword") String keyword);
+
+    @Query("""
+        select c.id as id,
+               c.title as title,
+               c.price as price,
+               cat.name as categoryName
+        from Course c
+        join c.category cat
+        """)
+    List<CourseSummaryProjection> findCourseSummaries();
 }
